@@ -18,6 +18,8 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements ServiceConnection, View
         .OnClickListener {
+    boolean bind = false;
+//    IRemoteService iRemoteService;
 
     @Bind(R.id.btn1)
     Button btn1;
@@ -44,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     @Override
     protected void onDestroy() {
+        if(bind){
+            unbindService(this);
+            bind = false;
+        }
         Log.e("Activity", "destroy");
         super.onDestroy();
 
@@ -52,7 +58,10 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-
+//        MyService.MyBinder myBinder= (MyService.MyBinder)iBinder;
+//
+//        MyService myService = myBinder.getMyService();
+//        iRemoteService = IRemoteService.Stub.asInterface(iBinder);
     }
 
     @Override
@@ -62,20 +71,28 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     @Override
     public void onClick(View view) {
-        Intent intent  = new Intent(getApplicationContext(),MyService.class);
+        Intent intent  = new Intent("remote");
         switch (view.getId()){
             case R.id.btn1:
                 startService(intent);
+
+
+
 
                 break;
             case R.id.btn2:
                 stopService(intent);
                 break;
             case R.id.btn3:
+                bind = true;
                 bindService(intent,this,BIND_AUTO_CREATE);
                 break;
             case R.id.btn4:
-                unbindService(this);
+                if(bind){
+
+                    unbindService(this);
+                    bind = false;
+                }
                 break;
         }
     }

@@ -1,0 +1,2 @@
+// MSG.aidl
+parcelable MyRect;
